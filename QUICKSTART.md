@@ -5,7 +5,7 @@
 1. Vai su GitHub nella repository `aikon78/myRepo`
 2. Clicca sul pulsante verde **"Code"**
 3. Seleziona la tab **"Codespaces"**
-4. Clicca su **"Create codespace on copilot/create-ai-agent-codespace"** (o il branch principale)
+4. Clicca su **"Create codespace"** per creare un nuovo Codespace
 
 GitHub creerà automaticamente un ambiente di sviluppo completo nel cloud! ☁️
 

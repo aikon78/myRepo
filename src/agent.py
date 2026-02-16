@@ -170,12 +170,28 @@ class AIAgent:
         Returns:
             Lista di tools
         """
+        def safe_calculate(expression: str) -> str:
+            """Calcola in modo sicuro espressioni matematiche."""
+            try:
+                # Rimuovi spazi
+                expression = expression.strip()
+                # Usa un approccio più sicuro limitando il namespace
+                allowed_names = {
+                    'abs': abs, 'round': round, 'min': min, 'max': max,
+                    'sum': sum, 'pow': pow
+                }
+                # Valuta solo con funzioni matematiche sicure
+                result = eval(expression, {"__builtins__": {}}, allowed_names)
+                return str(result)
+            except Exception as e:
+                return f"Errore nel calcolo: {e}"
+        
         return [
             Tool(
                 name="Calculator",
-                func=lambda x: str(eval(x)),
-                description="Utile per eseguire calcoli matematici. "
-                           "Input deve essere un'espressione matematica valida."
+                func=safe_calculate,
+                description="Utile per eseguire calcoli matematici semplici. "
+                           "Input deve essere un'espressione matematica valida (es: 2+2, 10*5, pow(2,3))."
             ),
             # Aggiungi altri tools qui secondo le tue necessità
         ]
