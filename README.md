@@ -18,7 +18,7 @@ Ambiente di sviluppo completo per creare agenti di intelligenza artificiale usan
 1. 📖 **[QUICKSTART.md](QUICKSTART.md)** - Inizia in 5 minuti! Setup rapido e primi passi
 2. 🌐 **[CODESPACES.md](CODESPACES.md)** - Tutto su GitHub Codespaces (cos'è, come usarlo, tips)
 3. 🤖 **[GUIDA_AI_AGENT.md](GUIDA_AI_AGENT.md)** - Guida completa agli AI agents
-   - Quale engine scegliere (OpenAI, Anthropic, etc.)
+  - Quale engine scegliere (Mistral, Anthropic, etc.)
    - Devo addestrare il modello? (Spoiler: quasi mai!)
    - RAG vs Fine-Tuning
    - Best practices e esempi
@@ -31,7 +31,7 @@ Ambiente di sviluppo completo per creare agenti di intelligenza artificiale usan
 - 📚 **RAG (Retrieval Augmented Generation)** per knowledge base personalizzata
 - 🌐 **API REST** con FastAPI
 - 💬 **Interfaccia Web** con Streamlit
-- 🔧 **Supporto per OpenAI e Anthropic**
+- 🔧 **Supporto per Mistral AI e Anthropic**
 - 📊 **Esempi pratici** e documentazione completa
 
 ## 🚀 Quick Start
@@ -50,12 +50,12 @@ GitHub installerà automaticamente tutte le dipendenze!
 # Crea il file .env dalla template
 cp .env.example .env
 
-# Modifica .env e aggiungi la tua OpenAI API key
-# OPENAI_API_KEY=sk-...
+# Modifica .env e aggiungi la tua Mistral API key
+# MISTRAL_API_KEY=...
 ```
 
 Ottieni la tua API key da:
-- OpenAI: https://platform.openai.com/api-keys
+- Mistral AI: https://console.mistral.ai/api-keys/
 - Anthropic (opzionale): https://console.anthropic.com/
 
 ### 3. Prova l'Agente
@@ -87,7 +87,7 @@ python src/api.py
 
 Questa guida include:
 
-- 🎯 **Scelta dell'Engine**: Quale modello AI usare (OpenAI, Anthropic, Open Source)
+- 🎯 **Scelta dell'Engine**: Quale modello AI usare (Mistral, Anthropic, Open Source)
 - 🎓 **Training**: Se e quando addestrare un modello
 - 🔍 **RAG vs Fine-Tuning**: Quale approccio scegliere
 - 💡 **Best Practices**: Prompt engineering, gestione della memoria, tools
@@ -95,7 +95,7 @@ Questa guida include:
 
 ### Raccomandazioni Rapide
 
-**Engine consigliato**: LangChain + OpenAI GPT-3.5-turbo (o GPT-4)
+**Engine consigliato**: LangChain + Mistral (`mistral-small-latest`)
 
 **Devo addestrare?** NO nella maggior parte dei casi. Usa invece:
 1. **Prompt Engineering** (sempre)
@@ -109,7 +109,7 @@ Questa guida include:
 ```python
 from src.simple_agent import SimpleAgent
 
-agent = SimpleAgent(model="gpt-3.5-turbo")
+agent = SimpleAgent(model="mistral-small-latest")
 response = agent.chat("Ciao! Come funziona un agente AI?")
 print(response)
 ```
@@ -145,7 +145,7 @@ myRepo/
 │   └── devcontainer.json      # Configurazione Codespace
 ├── src/
 │   ├── agent.py               # Agente avanzato con LangChain e RAG
-│   ├── simple_agent.py        # Agente semplice con OpenAI
+│   ├── simple_agent.py        # Agente semplice con Mistral AI
 │   ├── api.py                 # API REST con FastAPI
 │   └── streamlit_app.py       # UI web con Streamlit
 ├── data/
@@ -165,7 +165,7 @@ myRepo/
 
 ```python
 agent = SimpleAgent(
-    model="gpt-3.5-turbo",     # Modello OpenAI
+  model="mistral-small-latest",  # Modello Mistral
     system_prompt="..."         # Prompt di sistema personalizzato
 )
 
@@ -177,7 +177,7 @@ agent.reset()                       # Reset conversazione
 
 ```python
 agent = AIAgent(
-    model="gpt-4",              # Modello OpenAI
+  model="mistral-large-latest",  # Modello Mistral
     temperature=0.7,            # Creatività (0-1)
     use_rag=True,              # Usa RAG
     knowledge_base_path="data"  # Path documenti
@@ -200,7 +200,7 @@ pytest tests/ --cov=src --cov-report=html
 ## 📚 Risorse Utili
 
 - [LangChain Documentation](https://python.langchain.com/)
-- [OpenAI API Reference](https://platform.openai.com/docs/)
+- [Mistral API Docs](https://docs.mistral.ai/)
 - [FastAPI Documentation](https://fastapi.tiangolo.com/)
 - [Streamlit Documentation](https://docs.streamlit.io/)
 
@@ -215,7 +215,7 @@ MIT
 ## ❓ Domande Frequenti
 
 **Q: Quale modello devo usare?**  
-A: Inizia con `gpt-3.5-turbo` per sviluppo (più economico). Usa `gpt-4` per produzione (più potente).
+A: Inizia con `mistral-small-latest` per sviluppo. Passa a `mistral-large-latest` per casi più complessi.
 
 **Q: Come aggiungo documenti alla knowledge base?**  
 A: Aggiungi file .txt nella cartella `data/`. Il sistema RAG li caricherà automaticamente.

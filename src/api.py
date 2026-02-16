@@ -39,7 +39,7 @@ async def startup_event():
     global agent
     try:
         agent = AIAgent(
-            model="gpt-3.5-turbo",
+            model="mistral-small-latest",
             temperature=0.7,
             use_rag=True
         )
@@ -63,29 +63,29 @@ async def root():
 async def chat(request: ChatRequest):
     """
     Endpoint per chattare con l'agente.
-    
+
     Args:
         request: Richiesta con messaggio utente
-        
+
     Returns:
         Risposta dell'agente
     """
     if not agent:
         raise HTTPException(status_code=503, detail="Agente non inizializzato")
-    
+
     try:
         # Reset memoria se richiesto
         if request.reset_memory:
             agent.reset_memory()
-        
+
         # Ottieni risposta
         response = agent.chat(request.message)
-        
+
         return ChatResponse(
             response=response,
             success=True
         )
-    
+
     except Exception as e:
         logger.error(f"Errore nella chat: {e}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -96,7 +96,7 @@ async def reset():
     """Reset della memoria conversazionale."""
     if not agent:
         raise HTTPException(status_code=503, detail="Agente non inizializzato")
-    
+
     try:
         agent.reset_memory()
         return {"status": "success", "message": "Memoria resettata"}

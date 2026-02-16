@@ -4,8 +4,9 @@ Interfaccia web usando Streamlit per l'agente AI.
 Esegui con: streamlit run src/streamlit_app.py
 """
 
-import streamlit as st
 import os
+
+import streamlit as st
 from dotenv import load_dotenv
 
 # Carica variabili ambiente
@@ -25,13 +26,13 @@ st.markdown("Chatta con il tuo agente AI personalizzato")
 # Sidebar per configurazioni
 with st.sidebar:
     st.header("⚙️ Configurazioni")
-    
+
     model = st.selectbox(
         "Modello",
-        ["gpt-3.5-turbo", "gpt-4", "gpt-4-turbo-preview"],
+        ["mistral-small-latest", "mistral-medium-latest", "mistral-large-latest"],
         index=0
     )
-    
+
     temperature = st.slider(
         "Temperatura",
         min_value=0.0,
@@ -39,16 +40,21 @@ with st.sidebar:
         value=0.7,
         step=0.1
     )
-    
+
     use_rag = st.checkbox("Usa RAG (Knowledge Base)", value=True)
-    
+
     if st.button("🗑️ Reset Chat"):
         st.session_state.messages = []
+        if "agent" in st.session_state:
+            try:
+                st.session_state.agent.reset_memory()
+            except Exception:
+                pass
         st.rerun()
 
 # Verifica API key
-if not os.getenv("OPENAI_API_KEY"):
-    st.error("⚠️ OPENAI_API_KEY non trovata nel file .env")
+if not os.getenv("MISTRAL_API_KEY"):
+    st.error("⚠️ MISTRAL_API_KEY non trovata nel file .env")
     st.stop()
 
 # Inizializza chat history
@@ -56,7 +62,16 @@ if "messages" not in st.session_state:
     st.session_state.messages = []
 
 # Inizializza agente
-if "agent" not in st.session_state or st.session_state.get("model") != model:
+current_config = {
+    "model": model,
+    "temperature": temperature,
+    "use_rag": use_rag
+}
+
+if (
+    "agent" not in st.session_state
+    or st.session_state.get("agent_config") != current_config
+):
     with st.spinner("Inizializzazione agente..."):
         try:
             from src.agent import AIAgent
@@ -65,7 +80,7 @@ if "agent" not in st.session_state or st.session_state.get("model") != model:
                 temperature=temperature,
                 use_rag=use_rag
             )
-            st.session_state.model = model
+            st.session_state.agent_config = current_config
         except Exception as e:
             st.error(f"Errore nell'inizializzazione: {e}")
             st.stop()
@@ -81,14 +96,15 @@ if prompt := st.chat_input("Scrivi il tuo messaggio..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.markdown(prompt)
-    
+
     # Ottieni risposta agente
     with st.chat_message("assistant"):
         with st.spinner("Pensando..."):
             try:
                 response = st.session_state.agent.chat(prompt)
                 st.markdown(response)
-                st.session_state.messages.append({"role": "assistant", "content": response})
+                st.session_state.messages.append(
+                    {"role": "assistant", "content": response})
             except Exception as e:
                 st.error(f"Errore: {e}")
 

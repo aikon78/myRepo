@@ -30,7 +30,7 @@ def check_dependencies():
         'chromadb',
         'python-dotenv'
     ]
-    
+
     missing = []
     for package in required:
         try:
@@ -39,7 +39,7 @@ def check_dependencies():
         except ImportError:
             print(f"✗ {package} - NON INSTALLATO")
             missing.append(package)
-    
+
     return len(missing) == 0
 
 
@@ -47,17 +47,17 @@ def check_env_file():
     """Verifica presenza file .env."""
     if os.path.exists('.env'):
         print("✓ File .env trovato")
-        
+
         # Verifica presenza API key
         from dotenv import load_dotenv
         load_dotenv()
-        
-        api_key = os.getenv('OPENAI_API_KEY')
-        if api_key and api_key != 'your-openai-api-key-here':
-            print("✓ OPENAI_API_KEY configurata")
+
+        api_key = os.getenv('MISTRAL_API_KEY')
+        if api_key and api_key != 'your-mistral-api-key-here':
+            print("✓ MISTRAL_API_KEY configurata")
             return True
         else:
-            print("⚠️  OPENAI_API_KEY non configurata in .env")
+            print("⚠️  MISTRAL_API_KEY non configurata in .env")
             return False
     else:
         print("✗ File .env non trovato")
@@ -70,14 +70,14 @@ def check_directories():
     """Verifica struttura directory."""
     dirs = ['src', 'data', 'tests', '.devcontainer']
     all_exist = True
-    
+
     for d in dirs:
         if os.path.exists(d):
             print(f"✓ Directory {d}/")
         else:
             print(f"✗ Directory {d}/ non trovata")
             all_exist = False
-    
+
     return all_exist
 
 
@@ -86,21 +86,21 @@ def main():
     print("=" * 60)
     print("🔍 VERIFICA CONFIGURAZIONE AMBIENTE AI AGENT")
     print("=" * 60)
-    
+
     print("\n📦 Versione Python:")
     python_ok = check_python_version()
-    
+
     print("\n📚 Dipendenze:")
     deps_ok = check_dependencies()
-    
+
     print("\n⚙️  Configurazione:")
     env_ok = check_env_file()
-    
+
     print("\n📁 Struttura:")
     dirs_ok = check_directories()
-    
+
     print("\n" + "=" * 60)
-    
+
     if python_ok and deps_ok and env_ok and dirs_ok:
         print("✅ TUTTO OK! Sei pronto per iniziare!")
         print("\nProva a eseguire:")

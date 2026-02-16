@@ -167,7 +167,7 @@ Già installate:
 NON committare API keys! Usa sempre `.env`:
 ```bash
 # .env è in .gitignore
-echo "OPENAI_API_KEY=sk-xxx" > .env
+echo "MISTRAL_API_KEY=your-key" > .env
 ```
 
 Il Codespace legge il file `.env` ma non viene committato su GitHub.

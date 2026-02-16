@@ -11,7 +11,7 @@ GitHub creerà automaticamente un ambiente di sviluppo completo nel cloud! ☁�
 
 Il Codespace include:
 - ✅ Python 3.11
-- ✅ Tutte le librerie AI (LangChain, OpenAI, etc.)
+- ✅ Tutte le librerie AI (LangChain, Mistral, etc.)
 - ✅ VS Code nel browser
 - ✅ GitHub Copilot attivato
 - ✅ Tutto pronto per sviluppare!
@@ -28,18 +28,18 @@ cp .env.example .env
 code .env
 ```
 
-Modifica il file `.env` e sostituisci `your-openai-api-key-here` con la tua vera API key di OpenAI.
+Modifica il file `.env` e sostituisci `your-mistral-api-key-here` con la tua vera API key di Mistral.
 
-### Come ottenere una API key OpenAI:
+### Come ottenere una API key Mistral:
 
-1. Vai su https://platform.openai.com/
+1. Vai su https://console.mistral.ai/
 2. Registrati o fai login
-3. Vai su https://platform.openai.com/api-keys
+3. Vai su https://console.mistral.ai/api-keys/
 4. Clicca "Create new secret key"
-5. Copia la chiave (inizia con `sk-...`)
+5. Copia la chiave
 6. Incollala nel file `.env`
 
-**Costo**: OpenAI offre $5 di credito gratuito per provare. GPT-3.5-turbo costa circa $0.002 per 1000 token (molto economico!).
+**Costo**: i prezzi Mistral possono variare nel tempo; controlla il pricing ufficiale nella console Mistral.
 
 ## Passo 3: Verifica la Configurazione (30 secondi)
 
@@ -112,9 +112,9 @@ Riavvia l'agente e vedrai la differenza!
 ### 3. Sperimenta con i Modelli
 
 Nel codice, prova a cambiare:
-- `gpt-3.5-turbo` → economico e veloce
-- `gpt-4` → più intelligente ma più costoso
-- `gpt-4-turbo-preview` → GPT-4 più veloce
+- `mistral-small-latest` → veloce e conveniente
+- `mistral-medium-latest` → buon equilibrio qualità/costo
+- `mistral-large-latest` → qualità più alta
 
 ### 4. Aggiungi Nuovi Tools
 
@@ -158,7 +158,7 @@ Apri http://localhost:8000/docs per la documentazione interattiva!
 
 3. **Documentazione Ufficiale**:
    - [LangChain](https://python.langchain.com/)
-   - [OpenAI](https://platform.openai.com/docs/)
+   - [Mistral](https://docs.mistral.ai/)
    - [FastAPI](https://fastapi.tiangolo.com/)
 
 ## ❓ Problemi Comuni
@@ -169,16 +169,16 @@ Apri http://localhost:8000/docs per la documentazione interattiva!
 pip install -r requirements.txt
 ```
 
-### "OpenAI API key not found"
+### "Mistral API key not found"
 
 Hai creato il file `.env`? Controlla che sia nella directory principale e contenga:
 ```
-OPENAI_API_KEY=sk-tua-chiave-qui
+MISTRAL_API_KEY=tua-chiave-qui
 ```
 
 ### "Rate limit exceeded"
 
-Stai usando troppi token. Aspetta un minuto o aggiungi credito al tuo account OpenAI.
+Stai usando troppi token. Aspetta un minuto o verifica limiti e credito del tuo account Mistral.
 
 ### Il Codespace è lento
 
