@@ -5,9 +5,16 @@ Esegui con: streamlit run src/streamlit_app.py
 """
 
 import os
+import sys
+from pathlib import Path
 
 import streamlit as st
 from dotenv import load_dotenv
+
+# Assicura che il progetto sia importabile quando lo script gira da /src
+project_root = Path(__file__).resolve().parents[1]
+if str(project_root) not in sys.path:
+    sys.path.insert(0, str(project_root))
 
 # Carica variabili ambiente
 load_dotenv()
