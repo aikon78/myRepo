@@ -1,0 +1,40 @@
+# Core dependencies
+python-dotenv==1.0.0
+
+# AI/ML Frameworks
+openai==1.12.0
+anthropic==0.18.1
+langchain==0.1.9
+langchain-openai==0.0.6
+langchain-community==0.3.27  # Updated to fix XXE, SSRF, and pickle deserialization vulnerabilities
+
+# Vector Databases and Embeddings
+chromadb==0.4.22
+faiss-cpu==1.7.4
+sentence-transformers==2.3.1
+
+# Data Processing
+numpy==1.26.4
+pandas==2.2.0
+tiktoken==0.5.2
+
+# Web Framework (for API)
+fastapi==0.109.2
+uvicorn[standard]==0.27.1
+streamlit==1.31.1
+
+# Utilities
+python-multipart==0.0.22  # Updated to fix arbitrary file write and DoS vulnerabilities
+requests==2.31.0
+pydantic==2.6.1
+pyyaml==6.0.1
+
+# Development Tools
+jupyter==1.0.0
+ipykernel==6.29.2
+black==24.2.0
+pylint==3.0.3
+pytest==8.0.1
+
+# Monitoring and Logging
+loguru==0.7.2
