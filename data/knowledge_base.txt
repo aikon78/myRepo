@@ -1,0 +1,40 @@
+Questa è la knowledge base per l'agente AI.
+
+# Informazioni sulla Società
+
+La nostra azienda è leader nel settore tecnologico, specializzata nello sviluppo di soluzioni AI innovative.
+
+## Prodotti
+
+### AI Assistant Pro
+- Assistente virtuale intelligente
+- Supporta multiple lingue
+- Integrazione con API esterne
+- Prezzo: €99/mese
+
+### Data Analytics Suite
+- Analisi avanzata dei dati
+- Dashboard in tempo reale
+- Machine Learning integrato
+- Prezzo: €299/mese
+
+## Supporto Clienti
+
+Orari: Lunedì-Venerdì, 9:00-18:00
+Email: support@example.com
+Telefono: +39 02 1234567
+
+## FAQ
+
+### Come posso attivare il mio account?
+Dopo la registrazione, riceverai un'email di conferma. Clicca sul link per attivare l'account.
+
+### Quali metodi di pagamento accettate?
+Accettiamo carte di credito, PayPal e bonifico bancario.
+
+### Posso cancellare in qualsiasi momento?
+Sì, puoi cancellare il tuo abbonamento in qualsiasi momento dal pannello di controllo.
+
+## Politica di Rimborso
+
+Offriamo rimborso completo entro 30 giorni dall'acquisto se non sei soddisfatto del servizio.
