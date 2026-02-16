@@ -6,10 +6,23 @@ Ambiente di sviluppo completo per creare agenti di intelligenza artificiale usan
 
 - [Caratteristiche](#caratteristiche)
 - [Quick Start](#quick-start)
-- [Guida Completa](#guida-completa)
+- [Guide Complete](#guide-complete)
 - [Esempi](#esempi)
 - [Struttura del Progetto](#struttura-del-progetto)
 - [API Reference](#api-reference)
+
+## 📚 Guide Complete
+
+**Nuovo a GitHub Codespaces o AI agents? Inizia qui:**
+
+1. 📖 **[QUICKSTART.md](QUICKSTART.md)** - Inizia in 5 minuti! Setup rapido e primi passi
+2. 🌐 **[CODESPACES.md](CODESPACES.md)** - Tutto su GitHub Codespaces (cos'è, come usarlo, tips)
+3. 🤖 **[GUIDA_AI_AGENT.md](GUIDA_AI_AGENT.md)** - Guida completa agli AI agents
+   - Quale engine scegliere (OpenAI, Anthropic, etc.)
+   - Devo addestrare il modello? (Spoiler: quasi mai!)
+   - RAG vs Fine-Tuning
+   - Best practices e esempi
+4. 💡 **[examples/prompt_examples.py](examples/prompt_examples.py)** - Esempi di prompt engineering
 
 ## ✨ Caratteristiche
 
@@ -22,6 +35,8 @@ Ambiente di sviluppo completo per creare agenti di intelligenza artificiale usan
 - 📊 **Esempi pratici** e documentazione completa
 
 ## 🚀 Quick Start
+
+**⚡ Vuoi iniziare subito? Leggi [QUICKSTART.md](QUICKSTART.md) per una guida passo-passo di 5 minuti!**
 
 ### 1. Apri in Codespace
 
@@ -68,7 +83,9 @@ python src/api.py
 
 ## 📖 Guida Completa
 
-Leggi [GUIDA_AI_AGENT.md](GUIDA_AI_AGENT.md) per una guida completa che include:
+**📚 Per una guida dettagliata su AI agents, leggi [GUIDA_AI_AGENT.md](GUIDA_AI_AGENT.md)**
+
+Questa guida include:
 
 - 🎯 **Scelta dell'Engine**: Quale modello AI usare (OpenAI, Anthropic, Open Source)
 - 🎓 **Training**: Se e quando addestrare un modello
