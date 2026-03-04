@@ -10,6 +10,7 @@ langchain-community==0.0.38
 
 # Vector Databases and Embeddings
 chromadb==0.4.22
+pysqlite3-binary==0.5.2.post2  # Fix for sqlite3 version requirement in ChromaDB
 faiss-cpu==1.7.4
 sentence-transformers==2.3.1
 

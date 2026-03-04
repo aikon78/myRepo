@@ -10,20 +10,31 @@ Questo esempio mostra come creare un agente AI che:
 Provider predefinito: Mistral AI.
 """
 
-import os
+from loguru import logger
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_community.document_loaders import TextLoader, DirectoryLoader
+from langchain_community.vectorstores import Chroma
+from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain.memory import ConversationBufferMemory
+from langchain.agents import AgentExecutor, Tool, create_tool_calling_agent
+from langchain_core.embeddings import DeterministicFakeEmbedding
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain_openai import ChatOpenAI
 from typing import List, Optional
+import shutil
+import os
+import sys
+__import__('pysqlite3')
+sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+
+# Fix per sqlite3 version requirement in ChromaDB
+
+
 try:
     from dotenv import load_dotenv
 except ImportError:
     def load_dotenv(*args, **kwargs):
         return False
-from langchain_openai import ChatOpenAI, OpenAIEmbeddings
-from langchain.agents import initialize_agent, Tool, AgentType
-from langchain.memory import ConversationBufferMemory
-from langchain_community.vectorstores import Chroma
-from langchain_community.document_loaders import TextLoader, DirectoryLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from loguru import logger
 
 # Carica variabili ambiente
 load_dotenv()
@@ -44,17 +55,48 @@ class RAGSystem:
         Args:
             knowledge_base_path: Path alla directory con i documenti
         """
-        if not api_key:
-            api_key = os.getenv("MISTRAL_API_KEY")
-
         self.knowledge_base_path = knowledge_base_path
-        self.embeddings = OpenAIEmbeddings(
-            model="mistral-embed",
-            openai_api_key=api_key,
-            openai_api_base=base_url
-        )
+        self.persist_directory = "./chroma_db"
+        self.embeddings = self._create_embeddings()
         self.vectorstore = None
         self._load_knowledge_base()
+
+    def _create_embeddings(self):
+        """Inizializza embeddings con fallback robusto se Torch/HF fallisce."""
+        backend = os.getenv("RAG_EMBEDDINGS_BACKEND",
+                            "huggingface").lower().strip()
+
+        if backend == "fake":
+            logger.warning(
+                "RAG_EMBEDDINGS_BACKEND=fake: uso embeddings deterministiche di fallback"
+            )
+            return DeterministicFakeEmbedding(size=384)
+
+        try:
+            return HuggingFaceEmbeddings(
+                model_name="sentence-transformers/all-MiniLM-L6-v2",
+                model_kwargs={"device": "cpu"}
+            )
+        except Exception as e:
+            logger.warning(
+                f"Embeddings HuggingFace non disponibili ({e}), fallback a embeddings deterministiche"
+            )
+            return DeterministicFakeEmbedding(size=384)
+
+    def _build_vectorstore(self, chunks, persistent: bool = True):
+        """Crea il vector store Chroma a partire dai chunks."""
+        if persistent:
+            os.makedirs(self.persist_directory, exist_ok=True)
+            return Chroma.from_documents(
+                documents=chunks,
+                embedding=self.embeddings,
+                persist_directory=self.persist_directory
+            )
+
+        return Chroma.from_documents(
+            documents=chunks,
+            embedding=self.embeddings
+        )
 
     def _load_knowledge_base(self):
         """Carica i documenti e crea il vector store."""
@@ -81,17 +123,40 @@ class RAGSystem:
             chunks = text_splitter.split_documents(documents)
 
             # Crea vector store
-            self.vectorstore = Chroma.from_documents(
-                documents=chunks,
-                embedding=self.embeddings,
-                persist_directory="./chroma_db"
-            )
+            try:
+                self.vectorstore = self._build_vectorstore(chunks)
+            except Exception as e:
+                error_message = str(e)
+                tenant_error = "default_tenant" in error_message or "tenant" in error_message.lower()
+
+                if not tenant_error:
+                    raise
+
+                logger.warning(
+                    "Vector store non compatibile rilevato, reset del database locale Chroma e nuovo tentativo"
+                )
+                shutil.rmtree(self.persist_directory, ignore_errors=True)
+
+                try:
+                    self.vectorstore = self._build_vectorstore(chunks)
+                except Exception as retry_error:
+                    logger.warning(
+                        f"Persistenza Chroma non disponibile ({retry_error}), fallback in-memory"
+                    )
+                    self.vectorstore = self._build_vectorstore(
+                        chunks, persistent=False)
 
             logger.info(
                 f"Knowledge base caricata: {len(chunks)} chunks da {len(documents)} documenti")
 
         except Exception as e:
             logger.error(f"Errore nel caricamento della knowledge base: {e}")
+
+    def reload(self) -> None:
+        """Ricarica la knowledge base e rigenera il vector store."""
+        self.vectorstore = None
+        shutil.rmtree(self.persist_directory, ignore_errors=True)
+        self._load_knowledge_base()
 
     def search(self, query: str, k: int = 3) -> str:
         """
@@ -161,9 +226,7 @@ class AIAgent:
         # Aggiungi RAG se abilitato
         if use_rag:
             self.rag = RAGSystem(
-                knowledge_base_path=knowledge_base_path,
-                api_key=api_key,
-                base_url=base_url
+                knowledge_base_path=knowledge_base_path
             )
             tools.append(
                 Tool(
@@ -178,11 +241,26 @@ class AIAgent:
         # Aggiungi altri tools personalizzati
         tools.extend(self._create_custom_tools())
 
-        # Inizializza agent
-        self.agent = initialize_agent(
-            tools=tools,
+        # Inizializza agent (API non deprecata)
+        prompt = ChatPromptTemplate.from_messages([
+            (
+                "system",
+                "Sei un assistente AI utile e preciso. Usa i tools quando necessario."
+            ),
+            MessagesPlaceholder(variable_name="chat_history"),
+            ("human", "{input}"),
+            MessagesPlaceholder(variable_name="agent_scratchpad"),
+        ])
+
+        agent_runnable = create_tool_calling_agent(
             llm=self.llm,
-            agent=AgentType.CHAT_CONVERSATIONAL_REACT_DESCRIPTION,
+            tools=tools,
+            prompt=prompt
+        )
+
+        self.agent = AgentExecutor(
+            agent=agent_runnable,
+            tools=tools,
             memory=self.memory,
             verbose=True,
             handle_parsing_errors=True
@@ -234,8 +312,8 @@ class AIAgent:
             Risposta dell'agente
         """
         try:
-            response = self.agent.run(message)
-            return response
+            response = self.agent.invoke({"input": message})
+            return response.get("output", "")
         except Exception as e:
             logger.error(f"Errore nella conversazione: {e}")
             return f"Mi dispiace, si è verificato un errore: {e}"

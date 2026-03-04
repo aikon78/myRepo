@@ -59,6 +59,20 @@ with st.sidebar:
                 pass
         st.rerun()
 
+    if st.button("🔄 Ricarica Knowledge Base"):
+        if not use_rag:
+            st.sidebar.warning("Abilita RAG per ricaricare la knowledge base.")
+        elif "agent" in st.session_state and hasattr(st.session_state.agent, "rag"):
+            with st.spinner("Ricarico knowledge base..."):
+                try:
+                    st.session_state.agent.rag.reload()
+                    st.sidebar.success("Knowledge base ricaricata.")
+                except Exception as e:
+                    st.sidebar.error(f"Errore nel reload: {e}")
+        else:
+            st.sidebar.warning("Agente non pronto, riprova tra poco.")
+
+
 # Verifica API key
 if not os.getenv("MISTRAL_API_KEY"):
     st.error("⚠️ MISTRAL_API_KEY non trovata nel file .env")
@@ -117,4 +131,4 @@ if prompt := st.chat_input("Scrivi il tuo messaggio..."):
 
 # Footer
 st.sidebar.markdown("---")
-st.sidebar.markdown("Made with ❤️ using Streamlit")
+st.sidebar.markdown("© 2026 AI Agent Chat")
